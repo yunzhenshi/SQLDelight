@@ -1,0 +1,53 @@
+create table pb_drugbill_details(
+    id                 TEXT(40)                    primary key,
+    clinicId           TEXT(40)                    not null,
+    drugBillId         TEXT(40)                    not null,
+    commodityId        TEXT(40)                    not null,
+    commodityCategory  TEXT(40)                    not null,
+    showCommodityName  TEXT(40)                    null,
+    orderNum           TEXT                        null,
+    is_delete          TEXT                        null,
+    batchId            TEXT(40)                    null,
+    validityDate       TEXT                        null,
+    useLevel           TEXT(40)                    null,
+    useLevelUnit       TEXT(40)                    null,
+    frequency          TEXT(40)                    null,
+    usage              TEXT(40)                    null,
+    dosageFormId       TEXT(50)                    DEFAULT(''),
+    specifcations      TEXT(50)                    null,
+    priceUnit          TEXT(40)                    null,
+    totalNumber        TEXT(40)                    null,
+    receivablePrice    TEXT                        not null,
+    commonUnit         TEXT(40)                    null,
+    minimumUnit        TEXT(40)                    null
+    );
+
+insertone:
+insert into pb_drugbill_details values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);
+
+selectDetailsinfo:
+SELECT
+	db.id,
+    db.drugBillId,
+	db.commodityId,
+    db.commodityCategory,
+	db.showCommodityName,
+    db.orderNum,
+	db.useLevel,
+    db.useLevelUnit,
+	db.frequency,
+    db.usage,
+	db.dosageFormId,
+    db.specifcations,
+	db.priceUnit,
+    db.totalNumber,
+	db.receivablePrice,
+    db.commonUnit,
+	db.minimumUnit
+FROM
+	pb_drugbill_details db
+WHERE
+	1=1
+AND db.drugBillId = ?
+order by  db.orderNum;
+

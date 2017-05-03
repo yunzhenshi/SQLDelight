@@ -1,0 +1,289 @@
+create TABLE pb_commodity_main (
+    id                        TEXT(40)                    primary key,
+    commodityCategory         TEXT(40)                    null,
+    commodityCode             TEXT(40)                    null,
+    commodityName             TEXT(70)                    null,
+    commodityShortName        TEXT(20)                    null,
+    commonNum	              TEXT(20)                    null,
+    simpleName                TEXT(50)                    null,
+    simpleShortName           TEXT(20)                    null,
+    typeId                    TEXT(40)                    null,
+    categoryId                TEXT(40)                    null,
+    dosageFormId              TEXT(40)                    null,
+    dosageUnitId              TEXT(40)                    null,
+    dosage                    TEXT(20)                    null,
+    commonUnit                TEXT(40)                    null,
+    minimumUnit               TEXT(40)                    null,
+    taboo                     TEXT(400)                   null,
+    forbidden                 TEXT(40)                    null,
+    direction                 TEXT(6)                     null,
+    rate                      TEXT(6)                     null,
+    quantum                   TEXT(8)                     null,
+    quantum_unit              TEXT(6)                     null,
+    specs                     TEXT(50)                    null,
+    enterpriseName            TEXT(20)                    null,
+    conversionValue           TEXT                       null,
+    prescriptionPrice1        TEXT                        null,
+    prescriptionPrice2        TEXT                        null,
+    prescriptionNum1          TEXT	                   null,
+    prescriptionNum2          TEXT	                   null,
+    remark                    TEXT(600)                   null,
+    medicinalCatagory         TEXT(32)                    DEFAULT(''),
+    natureSmell               TEXT(30)                    DEFAULT(''),
+    medicinalEffectLocation   TEXT(30)                    DEFAULT(''),
+    medicinalEffect           TEXT(100)                   DEFAULT(''),
+    indication                TEXT(100)                   DEFAULT(''),
+    announcements             TEXT(100)                   DEFAULT(''),
+    defaultDosage             TEXT                        DEFAULT(0),
+    activeTime                TEXT(30)                    DEFAULT(''),
+    overedThreshold           TEXT(1)                     null,
+    showedRedPoint            TEXT(1)                     null,
+    base_version              TEXT(40)                    null,
+    status                    TEXT                        null,
+    clinicId                  TEXT(40)                    null
+    );
+
+insertone:
+insert into pb_commodity_main values (?,?,?,?,?,?,?,?,?,?,?,?,
+?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);
+
+--中草药库存提醒 的数量
+selectStockAlertHerbalCount:
+SELECT count(1) as countNum FROM pb_commodity_main WHERE
+       commodityCategory!=3
+       and (prescriptionNum1<? or (prescriptionNum1<=? and prescriptionNum2==0))
+       and forbidden = '1' and clinicId =?
+       and commodityCategory !=0
+       and commodityCategory != 1;
+
+
+--西药器械的库存提醒 的数量
+selectStockAlertWesternCount:
+SELECT count(1) as countNum FROM pb_commodity_main WHERE
+       commodityCategory!=3
+       and (prescriptionNum1<? or (prescriptionNum1<=? and prescriptionNum2==0))
+       and forbidden = '1' and clinicId =?
+       and commodityCategory != 4;
+
+--中草药库存提醒
+selectStockAlertHerbal:
+SELECT *   FROM pb_commodity_main WHERE
+       commodityCategory!=3
+       and (prescriptionNum1<? or (prescriptionNum1<=? and prescriptionNum2==0))
+       and forbidden = '1' and clinicId =?
+       and commodityCategory !=0
+       and commodityCategory != 1
+       order by commodityShortName asc limit ? offset ?;
+
+
+--西药器械的库存提醒
+selectStockAlertWestern:
+SELECT *  FROM pb_commodity_main WHERE
+       commodityCategory!=3
+       and (prescriptionNum1<? or (prescriptionNum1<=? and prescriptionNum2==0))
+       and forbidden = '1' and clinicId =?
+       and commodityCategory != 4
+       order by commodityShortName asc limit ? offset ?;
+--获取 有效期需要提醒的数量
+selectValidCount:
+SELECT count(1) as countNum FROM pb_commodity_main WHERE
+        commodityCategory= 1
+        and activeTime!=''
+        and activeTime <= ?
+        and forbidden = '1'
+        and clinicId = ?;
+
+--获取 有效期需要提醒的列表
+selectValid:
+SELECT * FROM pb_commodity_main WHERE
+        commodityCategory= 1
+        and activeTime!=''
+        and activeTime <= ?
+        and forbidden = '1'
+        and clinicId = ?
+        order by activeTime asc limit ? offset ?;
+
+--获取 中草药 器械诊所服务的所有列表 分页
+selectAllHerbalList:
+SELECT * FROM pb_commodity_main WHERE
+        forbidden = '1'
+        and clinicId = ?
+        and commodityCategory != 0
+        and commodityCategory != 1
+        order by commodityShortName asc limit ? offset ?;
+
+--获取 西药 器械诊所服务的所有列表 分页
+selectAlllWesternList:
+SELECT * FROM pb_commodity_main WHERE
+        forbidden = '1'
+        and clinicId = ?
+        and commodityCategory != 4
+        order by commodityShortName asc limit ? offset ?;
+
+--点击未分类出现的sql  药品
+selectUnclassifiedList:
+SELECT * FROM pb_commodity_main WHERE
+        id not in (SELECT groupObjId FROM sys_label_details where status = 0)
+        and dosageFormId != '40288c2a5157239d015157360cc60a01'
+        and dosageFormId != '40288c2a5157239d015157360cc60a02'
+        and forbidden = '1' and clinicId = ?
+        and commodityCategory = 1
+        order by commodityShortName asc limit ? offset ?;
+
+-- 注射液分组的类型
+selectInjectionList:
+SELECT * FROM pb_commodity_main WHERE
+              forbidden = '1'
+              and clinicId = ?
+              and (dosageFormId = '40288c2a5157239d015157360cc60a01' or dosageFormId = '40288c2a5157239d015157360cc60a02')
+              order by commodityShortName asc limit ? offset ?;
+-- 器械分组的类型
+selectapparatusList:
+SELECT * FROM pb_commodity_main WHERE
+              forbidden = '1'
+              and clinicId = ?
+              and commodityCategory=2
+              order by commodityShortName asc limit ? offset ?;
+
+-- 服务分组的类型
+selectServiceList:
+SELECT * FROM pb_commodity_main WHERE
+              forbidden = '1'
+              and clinicId = ?
+              and commodityCategory=2
+              order by commodityShortName asc limit ? offset ?;
+
+--通过分组来获取组内的药品列表
+selectByClassIdList:
+SELECT * FROM pb_commodity_main WHERE
+              id in (SELECT b.groupObjId FROM sys_label_main a, sys_label_details b WHERE
+                        ? = labelId and b.status = 0)
+              and forbidden = '1'
+              and clinicId = ?
+              order by commodityShortName asc limit ? offset ?;
+--通过查血获取列表(1)
+selectListBycondition:
+SELECT * FROM pb_commodity_main WHERE
+              forbidden = '1'
+              and clinicId =?
+              and(commodityName like ? or commodityShortName like ? )
+              and commodityCategory != 1
+              and commodityCategory!=0
+              and id = ?
+              order by commodityShortName asc;
+
+--通过查血获取列表(2)
+selectListBycondition2:
+SELECT * FROM pb_commodity_main WHERE
+              forbidden = '1'
+              and clinicId =?
+              and(commodityName like ? or commodityShortName like ? )
+              and commodityCategory != 1
+              and commodityCategory!=0
+              order by commodityShortName asc;
+
+--通过查血获取列表(3)
+selectListBycondition3:
+SELECT * FROM pb_commodity_main WHERE
+              forbidden = '1'
+              and clinicId =?
+              and(commodityName like ? or commodityShortName like ? )
+              and commodityCategory != 4
+              and id = ?
+              order by commodityShortName asc;
+
+--通过查血获取列表(4)
+selectListBycondition4:
+SELECT * FROM pb_commodity_main WHERE
+              forbidden = '1'
+              and clinicId =?
+              and(commodityName like ? or commodityShortName like ? )
+              and commodityCategory != 4
+              order by commodityShortName asc;
+--分页获取查询列表
+selectListByCOnditionPage:
+SELECT * FROM pb_commodity_main WHERE
+              forbidden = '1'
+              and clinicId = ?
+              and (commodityCategory = 1 or commodityCategory = 2)
+              and commodityShortName like ?;
+--获取个分类中数量的具体数字
+selectClassCount:
+SELECT count(1) as countNum FROM pb_commodity_main WHERE
+        id in (SELECT b.groupObjId FROM sys_label_main a, sys_label_details b WHERE
+                ? = b.labelId and b.status = 0)
+        and forbidden = '1'
+        and status = 0
+        and clinicId = ?;
+--查询服务 或 器械出现的总量
+selectServerOrApparatusNumer:
+SELECT count(1) as countNum FROM pb_commodity_main WHERE
+       forbidden = '1'
+       and clinicId = ?
+       and commodityCategory = ?;
+
+--查询西药的总量
+selectWesternNumer:
+SELECT count(1) as countNum FROM pb_commodity_main WHERE
+       forbidden = '1'
+       and clinicId = ?
+       and commodityCategory != 4;
+
+--查询中药的总量
+selectChineseNumer:
+SELECT count(1) as countNum FROM pb_commodity_main WHERE
+       forbidden = '1'
+       and clinicId = ?
+       and commodityCategory != 0
+       and commodityCategory != 1;
+
+
+--查询中药的总量
+selectInjectionNumer:
+SELECT count(1) as countNum FROM pb_commodity_main WHERE
+       forbidden = '1'
+       and clinicId = ?
+       and commodityCategory != 0
+       and commodityCategory != 1
+       and (dosageFormId ='40288c2a5157239d015157360cc60a02' or dosageFormId = '40288c2a5157239d015157360cc60a01');
+--未分类药品总数
+selectUnclassified:
+SELECT count(1) as countNum FROM pb_commodity_main WHERE
+       id not in (SELECT groupObjId FROM sys_label_details where status = 0)
+       and forbidden = '1'
+       and commodityCategory='1'
+       and clinicId = ?
+       and dosageFormId != '40288c2a5157239d015157360cc60a02'
+       and dosageFormId != '40288c2a5157239d015157360cc60a01';
+--通过商品码添加药品
+selectByCode:
+SELECT * FROM pb_commodity_main WHERE
+              forbidden = '1'
+              and clinicId =?
+              and commodityCode = ?;
+        --通过id查询药品
+selectByid:
+SELECT * FROM pb_commodity_main WHERE
+              clinicId = ?
+              and (commodityCategory = 1 or commodityCategory = 2)
+              and id = ?;
+
+selectAllMedicine:
+select  id,
+        conversionValue,
+        minimumUnit,
+        commonUnit,
+        commodityName,
+        commodityCategory,
+        dosageFormId,
+        categoryId,
+        commodityShortName,
+        simpleName,
+        simpleShortName,
+        specs,
+        natureSmell,
+        medicinalEffectLocation,
+        enterpriseName
+from pb_commodity_main
+where clinicId= ? and forbidden=='1' and commodityCategory!=?;
+

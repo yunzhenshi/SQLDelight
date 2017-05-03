@@ -1,0 +1,19 @@
+create table sys_label_main (
+    id                   TEXT(40)                   primary key,
+    clinicId             TEXT(40)                   not null,
+    name                 TEXT(40)                   not null,
+    code                 TEXT(20)                   not null,
+    parentId             TEXT(40)                   null,
+    sort                 TEXT                       null,
+    base_version         TEXT(40)                   null,
+    status               TEXT                       null
+    );
+insertone:
+insert into sys_label_main values (?,?,?,?,?,?,?,?);
+deletebyid:
+delete from sys_label_main where id = ?;
+selectListByPatentId:
+select * from sys_label_main
+where parentId = (SELECT id FROM sys_label_main WHERE id = ?)
+AND status = 0
+AND clinicId = ?;

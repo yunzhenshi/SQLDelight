@@ -1,0 +1,5 @@
+create table sys_config (
+    id                   TEXT(40)                    primary key,
+    prescriptionPrice    TEXT(1)                     null,
+    clinicId             TEXT(40)                    not null
+   );

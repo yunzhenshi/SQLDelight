@@ -1,0 +1,106 @@
+create table pb_patient (
+    id                   TEXT(40)                    primary key,
+    userName             TEXT(20)                    not null,
+    userShortName        TEXT(10)                    not null,
+    birthday             TEXT                        null,
+    sex                  TEXT(40)                    not null,
+    phone                TEXT(40)                    null,
+    isDelete             TEXT(40)                    null,
+    illHistory           TEXT(800)                   null,
+    allergicHistory      TEXT(800)                   null,
+    address              TEXT(100)                   null,
+    totalArrears         TEXT                        DEFAULT(0),
+    flag                 TEXT(1)                     null,
+    base_version         TEXT(40)                    null,
+    status               TEXT                        null,
+    clinicId             TEXT(40)                    null
+    );
+
+insertone:
+insert into pb_patient values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);
+selectNumberinOneClass:
+SELECT
+	count(1) AS countNum
+FROM
+	pb_patient
+WHERE
+	id IN (
+		SELECT
+			b.groupObjId
+		FROM
+			sys_label_details b
+		WHERE
+			? = b.labelId
+		AND b.status = '0'
+	)
+AND isDelete = 0
+AND clinicId = ?;
+selectTotalNumer:
+SELECT count(1) as countNum FROM pb_patient
+WHERE isDelete = 0
+and clinicId =?;
+
+selectallByshortName:
+SELECT * from pb_patient
+where isDelete = 0
+and clinicId=?
+order by userShortName;
+
+selectallInGroup:
+SELECT
+id,userName,
+userShortName,birthday,
+sex,phone,illHistory,
+allergicHistory,address,
+totalArrears,flag,base_version,
+status,clinicId
+from pb_patient
+WHERE id
+in
+    (SELECT b.groupObjId
+        FROM sys_label_details b
+        WHERE ? = b.labelId AND b.status = '0'
+    ) and isDelete = 0
+and clinicId =?
+order by userShortName
+limit ? offset ?;
+
+getAllArrears:
+SELECT count(1) as countNum,
+       sum(totalArrears) as countTotal
+FROM pb_patient
+where totalArrears>0
+and isDelete = 0
+and clinicId=?;
+--逻辑删除患者
+deletePatient:
+update pb_patient set isDelete = 1 where id = ?;
+
+selectPatientByinfo:
+SELECT id,userName,userShortName,
+       birthday,sex,phone,illHistory,
+       allergicHistory,address,totalArrears,
+       flag,base_version,status,clinicId
+from pb_patient
+where(      userName like ?
+        or  userShortName like ?)
+and isDelete = 0 and clinicId =?
+order by userShortName
+limit ? offset ?;
+
+
+
+selectPatientArrears:
+SELECT id,userName,userShortName,
+       birthday,sex,phone,illHistory,
+       allergicHistory,address,totalArrears,
+       flag,base_version,status,clinicId
+from pb_patient
+where(      userName like ?
+        or  userShortName like ?)
+and isDelete = 0
+and clinicId =?
+and totalArrears>0
+order by userShortName
+limit ? offset ?;
+

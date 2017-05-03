@@ -1,0 +1,15 @@
+create TABLE pb_prescription_charge (
+    id                   TEXT(40)                    primary key,
+    diagnosisId          TEXT(40)                    null,
+    chargeDate           TEXT                       null,
+    prescriptionMoney    TEXT                         null,
+    discountMoney        TEXT                         null,
+    amountMoney          TEXT                         not null,
+    collectionMoney      TEXT                         not null,
+    debtsMoney           TEXT                         null,
+    base_version         TEXT(40)                    null,
+    status               TEXT                         null,
+    clinicId         	 TEXT(40)                    null
+   );
+insertone:
+insert into pb_prescription_charge values (?,?,?,?,?,?,?,?,?,?,?);

@@ -1,0 +1,14 @@
+create table sys_error (
+    id                   TEXT(40)                    primary key,
+    clientIP             TEXT(40)                    null,
+    clientMAC            TEXT(40)                    null,
+    clientType           TEXT(40)                    null,
+    clientTime           TEXT                        null,
+    clientModel          TEXT(100)                   null,
+    clientErrorMsg       TEXT(1000)                  null,
+    flag                 TEXT(1)                     null
+
+);
+
+insertInfo:
+insert into sys_error values (?,?,?,?,?,?,?,?);

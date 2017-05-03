@@ -1,0 +1,9 @@
+create table dict_sickness_history (
+    id                   TEXT(96)                    not null,
+    sickness_no          TEXT(45)                    null,
+    sickness_name        TEXT(600)                   not null,
+    parent_id            TEXT(96)                    null,
+    name_spell           TEXT(600)                   not null,
+    key_words            TEXT(1200)                  null,
+    name_simple_spell    TEXT(300)                   not null
+);

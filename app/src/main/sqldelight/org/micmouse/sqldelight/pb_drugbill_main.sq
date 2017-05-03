@@ -1,0 +1,44 @@
+create table pb_drugbill_main (
+    id                 TEXT(40)                     primary key,
+    outpatientNo       TEXT(20)                     DEFAULT(''),
+    clinicId           TEXT(40)                     DEFAULT(''),
+    patientId          TEXT(40)                     DEFAULT(''),
+    retailDate         TEXT                        null,
+    status            TEXT(1)                      null,
+    medicineCost       TEXT(40)                     DEFAULT(''),
+    paidCost           TEXT(40)                     DEFAULT(''),
+    debtCost           TEXT(40)                     DEFAULT(''),
+    discount           TEXT(40)                     DEFAULT(''),
+    regiFlag           TEXT(1)                      DEFAULT(''),
+    base_version       TEXT(40)                     null
+);
+
+
+
+--可以获取最近两天或者某天的数据(加载一天或两天的数据)
+selectlist4day:
+SELECT
+	pat.id AS patientID,
+    pat.userName,
+	pat.sex,
+    pat.birthday,
+    pdb.id AS drugBillId,
+    pdb.status,
+	pdb.retailDate,
+    pdb.regiFlag,
+   	pdb.outpatientNo,
+    pdb.medicineCost,
+	pdb.debtCost,
+    pdb.paidCost,
+	pdb.discount
+FROM
+	pb_drugbill_main AS pdb
+LEFT JOIN pb_patient AS pat ON pdb.patientId = pat.id
+  where 1=1
+  and pdb.status <> 3
+  and pdb.clinicId = ?
+
+ and (retailDate like ?
+ or retailDate like ?
+    )
+ORDER BY pdb.retailDate  DESC ;

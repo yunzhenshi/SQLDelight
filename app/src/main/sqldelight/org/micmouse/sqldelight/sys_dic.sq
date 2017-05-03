@@ -1,0 +1,8 @@
+create TABLE sys_dic (
+    id                   TEXT(40)                    primary key,
+    code                 TEXT(40)                    not null,
+    name                 TEXT(20)                    null,
+    parent_id            TEXT(40)                    null,
+    base_version         TEXT(40)                    null,
+    status               TEXT                           null
+   );

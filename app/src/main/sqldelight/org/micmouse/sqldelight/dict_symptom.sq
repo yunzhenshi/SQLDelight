@@ -1,0 +1,9 @@
+create table dict_symptom (
+id                   TEXT(96)                    not null,
+symptom_no           TEXT(45)                    null,
+symptom_name         TEXT(600)                   not null,
+parent_id            TEXT(45)                    null,
+name_spell           TEXT(600)                   not null,
+key_words            TEXT(1200)                  null,
+name_simple_spell    TEXT(300)                   not null
+);

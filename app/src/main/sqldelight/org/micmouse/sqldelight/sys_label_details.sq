@@ -1,0 +1,21 @@
+create table sys_label_details (
+    id                   TEXT(40)                    primary key,
+    clinicId             TEXT(40)                    not null,
+    labelId              TEXT(40)                    not null,
+    groupObjId           TEXT(40)                    not null,
+    sort                 TEXT                        null,
+    base_version         TEXT(40)                    null,
+    status               TEXT                        null
+    );
+
+insertone:
+insert into sys_label_details values (?,?,?,?,?,?,?);
+deleteone:
+delete from sys_label_details where id = ?;
+
+selectIds:
+select id FROM sys_label_details WHERE labelId = ?;
+
+replaceInfo:
+REPLACE INTO sys_label_details(id,clinicId, labelId, groupObjId, sort, base_version, status)
+		VALUES (?,?,?,?,?,?,?);

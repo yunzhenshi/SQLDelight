@@ -1,0 +1,13 @@
+create table sys_date (
+        id                   TEXT(40)                    primary key,
+        date                 TEXT(40)                    null,
+        flag                 TEXT(1)                     DEFAULT('1'),
+        clinicId             TEXT(40)                    not null
+    );
+
+selectAllinfo:
+SELECT date FROM sys_date WHERE flag= ? and clinicId = ? ORDER BY date DESC;
+
+
+replaceInfo:
+REPLACE INTO sys_date (id, date, flag, clinicId) values (?,?,?,?);

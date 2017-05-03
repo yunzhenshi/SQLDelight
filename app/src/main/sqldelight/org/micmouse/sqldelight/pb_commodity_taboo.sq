@@ -1,0 +1,6 @@
+create table pb_commodity_taboo(
+    id                   TEXT(40)                    primary key,
+    commodityId          TEXT(40)                    not null,
+    tabooPerson          TEXT(400)                   null,
+    tabooContent         TEXT(400)                   null
+    );

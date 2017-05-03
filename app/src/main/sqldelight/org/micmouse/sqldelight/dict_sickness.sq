@@ -1,0 +1,12 @@
+create table dict_sickness (
+    id                   TEXT(40)                    not null,
+    sickness_no          TEXT(15)                    null,
+    sickness_name        TEXT(200)                   not null,
+    name_spell           TEXT(200)                   not null,
+    name_simple_spell    TEXT(100)                   not null,
+    key_words            TEXT(400)                   null,
+    parent_id            TEXT(40)                    null,
+    orderNum		 	 TEXT                	   	  null,
+    base_version 		 TEXT(40)                    null,
+    status               TEXT                      null
+   );

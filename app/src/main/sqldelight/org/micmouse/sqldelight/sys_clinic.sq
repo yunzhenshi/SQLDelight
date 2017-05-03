@@ -1,0 +1,20 @@
+create table sys_clinic
+    (
+    id                   TEXT(40)                    primary key,
+    clinicName           TEXT(200)                   not null,
+    province             TEXT(40)                    null,
+    city                 TEXT(40)                    null,
+    county               TEXT(40)                    null,
+    address              TEXT(200)                   null,
+    registrationNum      TEXT(40)                    null
+);
+
+
+deleteByid:
+delete from sys_clinic where id = ?;
+
+selectAll:
+select * from sys_clinic;
+
+insertOne:
+insert into sys_clinic values(?,?,?,?,?,?,?);

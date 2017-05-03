@@ -1,0 +1,67 @@
+
+
+create TABLE pb_prescription_main(
+    id                   TEXT(40)                    primary key,
+    patientId            TEXT(40)                    not null,
+    diagnoseDate         TEXT                       not null,
+    height               TEXT(3,1)                   null,
+    temperature          TEXT(2,1)                   null,
+    weight               TEXT(2,1)                   null,
+    systolicPressure     TEXT                        null,
+    diastolicPressure    TEXT                        null,
+    complaint            TEXT(400)                   null,
+    illHistory           TEXT(400)                   null,
+    diagnose             TEXT(400)                   null,
+    taboo                TEXT(400)                   null,
+    allergicHistory      TEXT(400)                   null,
+    diagnosisStatus      TEXT(40)                    null,
+    medDisCost           TEXT(40)                    null,
+    otherCost            TEXT(40)                    null,
+    flag                 TEXT(1)                     null,
+    isPrint              TEXT(1)                     null,
+    base_version         TEXT(40)                    null,
+    is_delete            TEXT                        null,
+    regiFlag		 	 TEXT(40)                    null,
+    clinicId             TEXT(40)                    null,
+    outpatient_no        TEXT(20)                    null,
+    pay_time             TEXT                       null,
+    prescriptionFlag     TEXT(40)                    null,
+    debtCost             TEXT(40)                    null,
+    paidCost             TEXT(40)                    null,
+    pulse                TEXT(40)                    null,
+    examOther            TEXT(40)                    null
+);
+
+insertone:
+insert into pb_prescription_main values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);
+
+--可以获取最近两天或者某天的数据
+selectlist4day:
+SELECT
+	pat.id AS patientID,
+    pat.userName,
+	pat.sex,
+    pat.birthday,
+	pat.totalArrears,
+    pre.id AS prescriptionid,
+    pre.diagnose,
+	pre.diagnosisStatus,
+    pre.diagnoseDate,
+	pre.medDisCost,
+    pre.otherCost,
+	pre.regiFlag,
+    pre.outpatient_no,
+	pre.pay_time,
+    pre.prescriptionFlag,
+	pre.debtCost,
+    pre.paidCost
+FROM
+	pb_prescription_main AS pre
+LEFT JOIN pb_patient AS pat ON pre.patientId = pat.id
+  where 1=1 and is_delete<>'1' and diagnosisStatus<>'3'
+and pre.clinicId = ?
+  and (diagnoseDate like ?
+  or diagnoseDate like ?
+)
+ORDER BY pre.diagnoseDate  DESC ;
+

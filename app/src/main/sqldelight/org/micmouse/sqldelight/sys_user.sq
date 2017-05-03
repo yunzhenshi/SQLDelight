@@ -1,0 +1,15 @@
+create table sys_user (
+    id                   TEXT(40)                    primary key,
+    loginName            TEXT(40)                    not null,
+    passWord             TEXT(40)                    not null,
+    userName             TEXT(40)                    not null,
+    functionCode         TEXT(100)                   null,
+    isAdmin              TEXT(40)                    null,
+    clinicId         	 TEXT(40)                    null
+    );
+
+insertinfo:
+insert into sys_user values (?,?,?,?,?,?,?);
+
+deletebyid:
+delete from sys_user where id = ?;
