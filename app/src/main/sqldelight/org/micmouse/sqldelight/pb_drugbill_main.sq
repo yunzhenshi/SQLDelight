@@ -11,11 +11,11 @@ create table pb_drugbill_main (
     discount           TEXT(40)                     DEFAULT(''),
     regiFlag           TEXT(1)                      DEFAULT(''),
     base_version       TEXT(40)                     null
+
 );
 
-
-
 --可以获取最近两天或者某天的数据(加载一天或两天的数据)
+
 selectlist4day:
 SELECT
 	pat.id AS patientID,
@@ -42,3 +42,60 @@ LEFT JOIN pb_patient AS pat ON pdb.patientId = pat.id
  or retailDate like ?
     )
 ORDER BY pdb.retailDate  DESC ;
+
+--加载一天的药单
+
+getDrugOneDay:
+SELECT
+	pat.id AS patientID,
+    pat.userName,
+	pat.sex,
+    pat.birthday,
+    pdb.id AS drugBillId,
+    pdb.status,
+	pdb.retailDate,
+    pdb.regiFlag,
+   	pdb.outpatientNo,
+    pdb.medicineCost,
+	pdb.debtCost,
+    pdb.paidCost,
+	pdb.discount
+FROM
+	pb_drugbill_main AS pdb
+LEFT JOIN pb_patient AS pat ON pdb.patientId = pat.id
+WHERE
+  1=1
+  and pdb.status <> 3
+  and pdb.clinicId = ?
+  and pdb.retailDate like ?
+ORDER BY pdb.outpatientNo  DESC ;
+
+--去重(日期：年月日),并按时间排序
+
+getDataList:
+SELECT
+    DISTINCT(substr(retailDate,1,10)) data
+FROM
+    pb_drugbill_main AS pdb
+WHERE
+    pdb.status <> 3
+    and clinicId =?
+ORDER BY retailDate DESC ;
+
+--replace覆盖主表
+
+replaceBillMain:
+REPLACE INTO
+    pb_drugbill_main (
+    id,
+    outpatientNo,
+    clinicId,
+    patientId,
+    retailDate,
+    status,
+    medicineCost,
+    paidCost,
+    debtCost,
+    discount,
+    regiFlag)
+VALUES (?,?,?,?,?,?,?,?,?,?,?) ;

@@ -1,5 +1,3 @@
-
-
 create TABLE pb_prescription_main(
     id                   TEXT(40)                    primary key,
     patientId            TEXT(40)                    not null,
@@ -30,12 +28,14 @@ create TABLE pb_prescription_main(
     paidCost             TEXT(40)                    null,
     pulse                TEXT(40)                    null,
     examOther            TEXT(40)                    null
+
 );
 
 insertone:
 insert into pb_prescription_main values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);
 
 --可以获取最近两天或者某天的数据
+
 selectlist4day:
 SELECT
 	pat.id AS patientID,
@@ -65,3 +65,44 @@ and pre.clinicId = ?
 )
 ORDER BY pre.diagnoseDate  DESC ;
 
+--异步加载下一天信息
+
+getPrescriptionOneDay:
+SELECT
+	pat.id AS patientID,
+    pat.userName,
+	pat.sex,
+    pat.birthday,
+	pat.totalArrears,
+    pre.id AS prescriptionid,
+    pre.diagnose,
+	pre.diagnosisStatus,
+    pre.diagnoseDate,
+	pre.medDisCost,
+    pre.otherCost,
+	pre.regiFlag,
+    pre.outpatient_no,
+	pre.pay_time,
+    pre.prescriptionFlag,
+	pre.debtCost,
+    pre.paidCost
+FROM
+	pb_prescription_main AS pre
+LEFT JOIN pb_patient AS pat ON pre.patientId = pat.id
+  where 1=1 and is_delete<>'1' and diagnosisStatus<>'3'
+and pre.clinicId = ?
+  and diagnoseDate like ?
+ORDER BY pre.diagnoseDate  DESC ;
+
+--去重(日期：年月日),并按时间排序
+
+getDataList:
+SELECT
+    DISTINCT(substr(diagnoseDate,1,10)) data
+FROM
+    pb_prescription_main
+WHERE
+    is_delete <> '1'
+    and diagnosisStatus <> '3'
+    and clinicId = ?
+ORDER BY diagnoseDate DESC ;
